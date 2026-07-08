@@ -22,27 +22,37 @@ Criar uma aplicação local para acompanhar automaticamente o preço de livros e
 
 * .NET
 * ASP.NET Core Web API
-* Avalonia UI
-* SQLite
+* PostgreSQL
 * Entity Framework Core
-* Background Worker
+* Background Service
 * Linux notifications com `notify-send`
 
 ## Estrutura inicial
 
+Projeto pessoal com um único `.csproj`. A organização é feita por pastas, sem múltiplos projetos:
+
 ```text
 BookPromoTracker/
 ├── src/
-│   ├── BookPromoTracker.Api/
-│   ├── BookPromoTracker.App/
-│   ├── BookPromoTracker.Domain/
-│   ├── BookPromoTracker.Infrastructure/
-│   └── BookPromoTracker.Worker/
+│   └── BookPromoTracker.Api/
+│       ├── Entities/       # Entidades do domínio (Book, Alert, etc.)
+│       ├── Data/           # DbContext e configuração do EF Core
+│       ├── Services/       # Lógica de negócio (futuro)
+│       ├── Program.cs
+│       └── appsettings.json
 │
 ├── docs/
-├── tests/
+├── docker-compose.yml
+├── BookPromoTracker.sln
 ├── README.md
 └── .gitignore
+```
+
+## Como executar
+
+```bash
+docker compose up -d
+dotnet run --project src/BookPromoTracker.Api
 ```
 
 ## Documentação

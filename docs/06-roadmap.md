@@ -4,11 +4,11 @@ Este documento apresenta um planejamento simples para evolução do projeto.
 
 ## Versão 0.1 - Estrutura inicial
 
-- [ ] Criar solução .NET
+- [X] Criar solução .NET
 - [ ] Criar estrutura de pastas do projeto
 - [ ] Criar entidades principais
-- [ ] Configurar SQLite
-- [ ] Criar documentação inicial
+- [X] Configurar Postgress
+- [X] Criar documentação inicial
 
 ## Versão 0.2 - Cadastro de livros
 
@@ -34,7 +34,7 @@ Este documento apresenta um planejamento simples para evolução do projeto.
 
 ## Versão 0.5 - Execução automática
 
-- [ ] Criar worker de verificação automática
+- [ ] Criar Background Service de verificação automática
 - [ ] Configurar intervalo de execução
 - [ ] Verificar apenas livros ativos
 - [ ] Registrar logs básicos das verificações
@@ -49,7 +49,7 @@ Este documento apresenta um planejamento simples para evolução do projeto.
 
 ## Melhorias futuras
 
-- [ ] Interface desktop com Avalonia UI
+- [ ] Interface desktop (Avalonia UI ou frontend web)
 - [ ] Ícone na bandeja do sistema
 - [ ] Gráfico de histórico de preços
 - [ ] Integração com Telegram ou Discord

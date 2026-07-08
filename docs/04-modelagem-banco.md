@@ -2,10 +2,6 @@
 
 Este documento apresenta uma modelagem inicial e simples para o banco de dados do projeto.
 
-## Banco recomendado
-
-Para a primeira versão, será utilizado **SQLite**, por ser leve, local e simples de configurar.
-
 ## Entidades principais
 
 ## Book

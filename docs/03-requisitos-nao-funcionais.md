@@ -10,19 +10,18 @@ Como o projeto é pessoal, a prioridade inicial é manter a solução objetiva e
 
 ## RNF02 - Organização do código
 
-O código deve ser organizado em camadas ou módulos, separando responsabilidades como:
+O código deve ser organizado por pastas dentro de um único projeto, separando responsabilidades como:
 
-- Interface
-- Regras de negócio
-- Acesso a dados
-- Consulta de preços
-- Notificações
+- `Entities` — modelos de domínio
+- `Data` — acesso a dados (EF Core)
+- `Services` — regras de negócio e integrações
+- `Program.cs` — endpoints e configuração da aplicação
 
 ## RNF03 - Persistência local
 
 A aplicação deve armazenar os dados localmente.
 
-Para a primeira versão, o banco recomendado é o SQLite.
+Para a primeira versão, o banco utilizado é o PostgreSQL, executado via Docker Compose.
 
 ## RNF04 - Compatibilidade com Linux
 

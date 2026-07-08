@@ -1,41 +1,92 @@
+using BookPromoTracker.Api.Data;
+using BookPromoTracker.Api.Entities;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection")
+    );
+});
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
-var summaries = new[]
+app.MapGet("/api/books", async (AppDbContext db) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    var books = await db.Books
+        .OrderBy(book => book.Title)
+        .ToListAsync();
 
-app.MapGet("/weatherforecast", () =>
+    return Results.Ok(books);
+});
+
+app.MapGet("/api/books/{id:guid}", async (Guid id, AppDbContext db) =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    var book = await db.Books.FindAsync(id);
+
+    return book is null
+        ? Results.NotFound()
+        : Results.Ok(book);
+});
+
+app.MapPost("/api/books", async (Book book, AppDbContext db) =>
+{
+    book.Id = Guid.NewGuid();
+    book.CreatedAt = DateTime.UtcNow;
+    book.IsActive = true;
+
+    db.Books.Add(book);
+    await db.SaveChangesAsync();
+
+    return Results.Created($"/api/books/{book.Id}", book);
+});
+
+app.MapPut("/api/books/{id:guid}", async (Guid id, Book input, AppDbContext db) =>
+{
+    var book = await db.Books.FindAsync(id);
+
+    if (book is null)
+    {
+        return Results.NotFound();
+    }
+
+    book.Title = input.Title;
+    book.Author = input.Author;
+    book.Isbn = input.Isbn;
+    book.ProductUrl = input.ProductUrl;
+    book.Asin = input.Asin;
+    book.TargetPrice = input.TargetPrice;
+    book.IsActive = input.IsActive;
+
+    await db.SaveChangesAsync();
+
+    return Results.Ok(book);
+});
+
+app.MapDelete("/api/books/{id:guid}", async (Guid id, AppDbContext db) =>
+{
+    var book = await db.Books.FindAsync(id);
+
+    if (book is null)
+    {
+        return Results.NotFound();
+    }
+
+    db.Books.Remove(book);
+    await db.SaveChangesAsync();
+
+    return Results.NoContent();
+});
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

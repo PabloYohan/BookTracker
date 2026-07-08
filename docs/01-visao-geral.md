@@ -35,10 +35,9 @@ A primeira versão do projeto terá foco em:
 
 - .NET
 - ASP.NET Core Web API
-- Avalonia UI
-- SQLite
+- PostgreSQL
 - Entity Framework Core
-- Background Worker
+- Background Service
 - Notificações Linux com `notify-send`
 
 ## Observação sobre coleta de preços
