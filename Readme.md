@@ -34,12 +34,12 @@ Projeto pessoal com um único `.csproj`. A organização é feita por pastas, se
 ```text
 BookPromoTracker/
 ├── src/
-│   └── BookPromoTracker.Api/
-│       ├── Entities/       # Entidades do domínio (Book, Alert, etc.)
-│       ├── Data/           # DbContext e configuração do EF Core
-│       ├── Services/       # Lógica de negócio (futuro)
-│       ├── Program.cs
-│       └── appsettings.json
+│   ├── Entities/           # Entidades do domínio (Book, Alert, etc.)
+│   ├── Data/               # DbContext e configuração do EF Core
+│   ├── Services/           # Lógica de negócio (futuro)
+│   ├── Program.cs
+│   ├── BookPromoTracker.csproj
+│   └── appsettings.json
 │
 ├── docs/
 ├── docker-compose.yml
@@ -52,7 +52,7 @@ BookPromoTracker/
 
 ```bash
 docker compose up -d
-dotnet run --project src/BookPromoTracker.Api
+dotnet run --project src/BookPromoTracker.csproj
 ```
 
 ## Documentação

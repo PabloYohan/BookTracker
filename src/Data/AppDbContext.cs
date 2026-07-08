@@ -1,7 +1,7 @@
-using BookPromoTracker.Api.Entities;
+using BookPromoTracker.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookPromoTracker.Api.Data;
+namespace BookPromoTracker.Data;
 
 public class AppDbContext : DbContext
 {

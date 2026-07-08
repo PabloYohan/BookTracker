@@ -1,4 +1,4 @@
-namespace BookPromoTracker.Api.Entities;
+namespace BookPromoTracker.Entities;
 
 public class Book
 {

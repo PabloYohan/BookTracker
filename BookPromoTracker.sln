@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B0539165-5BB2-44F9-828F-28C717330BB3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookPromoTracker.Api", "src\BookPromoTracker.Api\BookPromoTracker.Api.csproj", "{7F0ACFEE-0ABA-4B91-994A-EA9C685CDF52}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookPromoTracker", "src\BookPromoTracker.csproj", "{7F0ACFEE-0ABA-4B91-994A-EA9C685CDF52}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

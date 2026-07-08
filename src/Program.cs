@@ -1,5 +1,5 @@
-using BookPromoTracker.Api.Data;
-using BookPromoTracker.Api.Entities;
+using BookPromoTracker.Data;
+using BookPromoTracker.Entities;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

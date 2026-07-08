@@ -1,0 +1,6 @@
+@BookPromoTracker_HostAddress = http://localhost:5195
+
+GET {{BookPromoTracker_HostAddress}}/api/books
+Accept: application/json
+
+###
