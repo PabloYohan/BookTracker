@@ -11,4 +11,6 @@ public class Book
     public decimal TargetPrice { get; set; }
     public bool IsActive { get; set; }
     public DateTime CreatedAt { get; set; }
+
+    public ICollection<PriceHistory> PriceHistories { get; set; } = [];
 }

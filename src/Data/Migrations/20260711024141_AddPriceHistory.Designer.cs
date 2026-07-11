@@ -9,11 +9,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace BookPromoTracker.Migrations
+namespace BookPromoTracker.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260708235239_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260711024141_AddPriceHistory")]
+    partial class AddPriceHistory
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,6 +63,54 @@ namespace BookPromoTracker.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("BookPromoTracker.Entities.PriceHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CheckedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("CheckedAt");
+
+                    b.ToTable("PriceHistories");
+                });
+
+            modelBuilder.Entity("BookPromoTracker.Entities.PriceHistory", b =>
+                {
+                    b.HasOne("BookPromoTracker.Entities.Book", "Book")
+                        .WithMany("PriceHistories")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+                });
+
+            modelBuilder.Entity("BookPromoTracker.Entities.Book", b =>
+                {
+                    b.Navigation("PriceHistories");
                 });
 #pragma warning restore 612, 618
         }
