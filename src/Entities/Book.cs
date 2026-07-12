@@ -13,4 +13,5 @@ public class Book
     public DateTime CreatedAt { get; set; }
 
     public ICollection<PriceHistory> PriceHistories { get; set; } = [];
+    public ICollection<Alert> Alerts { get; set; } = [];
 }
