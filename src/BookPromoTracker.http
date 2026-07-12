@@ -1,6 +1,59 @@
 @BookPromoTracker_HostAddress = http://localhost:5195
 
+### Listar livros cadastrados
 GET {{BookPromoTracker_HostAddress}}/api/books
 Accept: application/json
+
+###
+
+### Buscar livro por ID
+GET {{BookPromoTracker_HostAddress}}/api/books/{{bookId}}
+Accept: application/json
+
+###
+
+### Cadastrar livro
+POST {{BookPromoTracker_HostAddress}}/api/books
+Content-Type: application/json
+
+{
+  "title": "O Iluminado",
+  "author": "Stephen King",
+  "productUrl": "https://www.amazon.com.br/dp/8532520709",
+  "asin": "8532520709",
+  "targetPrice": 35.00
+}
+
+###
+
+### Atualizar livro
+PUT {{BookPromoTracker_HostAddress}}/api/books/{{bookId}}
+Content-Type: application/json
+
+{
+  "title": "O Iluminado",
+  "author": "Stephen King",
+  "productUrl": "https://www.amazon.com.br/dp/8532520709",
+  "asin": "8532520709",
+  "targetPrice": 30.00,
+  "isActive": true
+}
+
+###
+
+### Ativar monitoramento
+PATCH {{BookPromoTracker_HostAddress}}/api/books/{{bookId}}/activate
+Accept: application/json
+
+###
+
+### Desativar monitoramento
+PATCH {{BookPromoTracker_HostAddress}}/api/books/{{bookId}}/deactivate
+Accept: application/json
+
+###
+
+### Remover livro
+DELETE {{BookPromoTracker_HostAddress}}/api/books/{{bookId}}
 
 ###

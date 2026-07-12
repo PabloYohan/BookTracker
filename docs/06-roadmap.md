@@ -5,17 +5,17 @@ Este documento apresenta um planejamento simples para evolução do projeto.
 ## Versão 0.1 - Estrutura inicial
 
 - [X] Criar solução .NET
-- [ ] Criar estrutura de pastas do projeto
-- [ ] Criar entidades principais
+- [X] Criar estrutura de pastas do projeto
+- [X] Criar entidades principais
 - [X] Configurar Postgress
 - [X] Criar documentação inicial
 
 ## Versão 0.2 - Cadastro de livros
 
-- [ ] Criar CRUD de livros
-- [ ] Permitir definir preço desejado
-- [ ] Permitir ativar ou desativar monitoramento
-- [ ] Criar listagem de livros cadastrados
+- [X] Criar CRUD de livros
+- [X] Permitir definir preço desejado
+- [X] Permitir ativar ou desativar monitoramento
+- [X] Criar listagem de livros cadastrados
 
 ## Versão 0.3 - Consulta de preços
 
