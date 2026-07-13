@@ -1,6 +1,6 @@
 # 04 - Modelagem do Banco de Dados
 
-Este documento apresenta uma modelagem inicial e simples para o banco de dados do projeto.
+Este documento apresenta a modelagem do banco de dados do projeto.
 
 ## Entidades principais
 
@@ -60,6 +60,30 @@ Representa um alerta gerado quando um livro entra em promoção.
 Book
  ├── PriceHistory
  └── Alert
+```
+
+## Implementação no EF Core
+
+A modelagem já está implementada em `AppDbContext` com as seguintes regras:
+
+- Exclusão em cascata de `PriceHistory` e `Alert` quando um livro é removido
+- Índice em `PriceHistory.BookId`
+- Índice em `PriceHistory.CheckedAt`
+- Índice em `Alert.BookId`
+- Índice em `Alert.CreatedAt`
+
+## Migrations existentes
+
+| Migration | Descrição |
+|---|---|
+| `InitialCreate` | Cria a tabela `Books` |
+| `AddPriceHistory` | Cria a tabela `PriceHistories` |
+| `AddAlert` | Cria a tabela `Alerts` |
+
+Para aplicar as migrations:
+
+```bash
+dotnet ef database update --project src/BookPromoTracker.csproj
 ```
 
 ## Observações

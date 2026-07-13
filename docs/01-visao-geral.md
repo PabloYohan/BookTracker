@@ -31,12 +31,38 @@ A primeira versão do projeto terá foco em:
 - Alertas de promoção
 - Notificação local no Linux
 
-## Tecnologias previstas
+## Status atual
 
-- .NET
-- ASP.NET Core Web API
+Até o momento, as versões **0.1** e **0.2** do roadmap estão concluídas.
+
+O que já funciona:
+
+- API Web em ASP.NET Core com Swagger em ambiente de desenvolvimento
+- Banco PostgreSQL configurado via Docker Compose
+- Entidades `Book`, `PriceHistory` e `Alert` modeladas e persistidas com EF Core
+- CRUD completo de livros, com validação de entrada
+- Definição de preço desejado (`targetPrice`)
+- Ativação e desativação de monitoramento (`isActive`)
+- Listagem de livros cadastrados, incluindo último preço encontrado quando houver histórico
+
+O que ainda não foi implementado:
+
+- Consulta de preços em lojas online
+- Gravação automática de histórico de preços
+- Geração de alertas de promoção
+- Verificação automática em background
+- Notificações locais no Linux
+
+## Tecnologias utilizadas
+
+- .NET 9
+- ASP.NET Core Web API (Minimal APIs)
 - PostgreSQL
 - Entity Framework Core
+- Swagger / OpenAPI
+
+## Tecnologias previstas
+
 - Background Service
 - Notificações Linux com `notify-send`
 
