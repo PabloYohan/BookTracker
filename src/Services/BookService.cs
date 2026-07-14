@@ -5,7 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookPromoTracker.Services;
 
-public class BookService(AppDbContext db) : IBookService
+public class BookService(
+    AppDbContext db,
+    IAmazonProductUrlParser urlParser,
+    ILogger<BookService> logger
+) : IBookService
 {
     public async Task<IReadOnlyList<BookListItemResponse>> ListAsync(
         CancellationToken cancellationToken = default
@@ -19,6 +23,8 @@ public class BookService(AppDbContext db) : IBookService
                 Id = book.Id,
                 Title = book.Title,
                 Author = book.Author,
+                Asin = book.Asin,
+                ProductUrl = book.ProductUrl,
                 TargetPrice = book.TargetPrice,
                 LastPrice = book.PriceHistories
                     .OrderByDescending(history => history.CheckedAt)
@@ -53,14 +59,19 @@ public class BookService(AppDbContext db) : IBookService
             return (null, errors);
         }
 
+        if (!urlParser.TryParse(request.ProductUrl, out var parsedUrl, out var urlError))
+        {
+            return (null, new Dictionary<string, string[]> { ["productUrl"] = [urlError!] });
+        }
+
         var book = new Book
         {
             Id = Guid.NewGuid(),
             Title = request.Title.Trim(),
             Author = request.Author.Trim(),
             Isbn = request.Isbn.Trim(),
-            Asin = request.Asin.Trim(),
-            ProductUrl = request.ProductUrl.Trim(),
+            Asin = parsedUrl!.Asin,
+            ProductUrl = parsedUrl.CanonicalUrl,
             TargetPrice = request.TargetPrice,
             IsActive = true,
             CreatedAt = DateTime.UtcNow,
@@ -68,6 +79,12 @@ public class BookService(AppDbContext db) : IBookService
 
         db.Books.Add(book);
         await db.SaveChangesAsync(cancellationToken);
+
+        logger.LogInformation(
+            "Livro cadastrado: {BookId}. URL normalizada: {ProductUrl}",
+            book.Id,
+            book.ProductUrl
+        );
 
         return (MapToResponse(book), null);
     }
@@ -85,6 +102,11 @@ public class BookService(AppDbContext db) : IBookService
             return (null, errors);
         }
 
+        if (!urlParser.TryParse(request.ProductUrl, out var parsedUrl, out var urlError))
+        {
+            return (null, new Dictionary<string, string[]> { ["productUrl"] = [urlError!] });
+        }
+
         var book = await db.Books.FindAsync([id], cancellationToken);
 
         if (book is null)
@@ -95,12 +117,18 @@ public class BookService(AppDbContext db) : IBookService
         book.Title = request.Title.Trim();
         book.Author = request.Author.Trim();
         book.Isbn = request.Isbn.Trim();
-        book.Asin = request.Asin.Trim();
-        book.ProductUrl = request.ProductUrl.Trim();
+        book.Asin = parsedUrl!.Asin;
+        book.ProductUrl = parsedUrl.CanonicalUrl;
         book.TargetPrice = request.TargetPrice;
         book.IsActive = request.IsActive;
 
         await db.SaveChangesAsync(cancellationToken);
+
+        logger.LogInformation(
+            "Livro atualizado: {BookId}. URL normalizada: {ProductUrl}",
+            book.Id,
+            book.ProductUrl
+        );
 
         return (MapToResponse(book), null);
     }

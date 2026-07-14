@@ -18,7 +18,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     );
 });
 
+builder.Services.AddSingleton<IAmazonProductUrlParser, AmazonProductUrlParser>();
 builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<IPriceHistoryService, PriceHistoryService>();
+builder.Services.AddScoped<IAlertService, AlertService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -31,5 +34,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapBooksEndpoints();
+app.MapAlertsEndpoints();
 
 app.Run();

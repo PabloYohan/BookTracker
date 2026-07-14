@@ -33,23 +33,41 @@ BookPromoTracker/
 │   │   └── Migrations/
 │   │
 │   ├── Dtos/                  # Contratos da API
-│   │   └── Books/
-│   │       ├── CreateBookRequest.cs
-│   │       ├── UpdateBookRequest.cs
-│   │       ├── BookResponse.cs
-│   │       └── BookListItemResponse.cs
+│   │   ├── Books/
+│   │   │   ├── CreateBookRequest.cs
+│   │   │   ├── UpdateBookRequest.cs
+│   │   │   ├── BookResponse.cs
+│   │   │   └── BookListItemResponse.cs
+│   │   ├── Prices/
+│   │   │   ├── RegisterManualPriceRequest.cs
+│   │   │   ├── ManualPriceRegistrationResponse.cs
+│   │   │   ├── PriceHistoryItemResponse.cs
+│   │   │   └── LowestPriceResponse.cs
+│   │   └── Alerts/
+│   │       ├── AlertResponse.cs
+│   │       └── UnreadAlertCountResponse.cs
 │   │
 │   ├── Services/              # Regras de negócio
 │   │   ├── IBookService.cs
-│   │   └── BookService.cs
+│   │   ├── BookService.cs
+│   │   ├── IAmazonProductUrlParser.cs
+│   │   ├── AmazonProductUrlParser.cs
+│   │   ├── IPriceHistoryService.cs
+│   │   ├── PriceHistoryService.cs
+│   │   ├── IAlertService.cs
+│   │   └── AlertService.cs
 │   │
 │   ├── Endpoints/             # Rotas HTTP
-│   │   └── BooksEndpoints.cs
+│   │   ├── BooksEndpoints.cs
+│   │   └── AlertsEndpoints.cs
 │   │
-│   ├── Program.cs             # Configuração da aplicação
+│   ├── Program.cs
 │   ├── BookPromoTracker.csproj
-│   ├── BookPromoTracker.http  # Exemplos de requisição
+│   ├── BookPromoTracker.http
 │   └── appsettings.json
+│
+├── tests/
+│   └── BookPromoTracker.Tests/
 │
 ├── docs/
 ├── docker-compose.yml
@@ -71,13 +89,6 @@ Centraliza o `AppDbContext`, configuração de relacionamentos, índices e migra
 
 Define os modelos expostos pela API. Separa o contrato HTTP das entidades de domínio.
 
-Exemplos atuais:
-
-- `CreateBookRequest` — entrada para cadastro
-- `UpdateBookRequest` — entrada para edição
-- `BookResponse` — detalhe de um livro
-- `BookListItemResponse` — item da listagem
-
 ### Services
 
 Implementa regras de negócio e orquestra o acesso ao banco.
@@ -85,6 +96,9 @@ Implementa regras de negócio e orquestra o acesso ao banco.
 Implementação atual:
 
 - `BookService` — CRUD de livros, validações e controle de monitoramento
+- `AmazonProductUrlParser` — validação de URL da Amazon Brasil, extração de ASIN e URL canônica
+- `PriceHistoryService` — registro manual de preços, histórico, menor preço e geração de alertas
+- `AlertService` — listagem, filtros e marcação de alertas
 
 ### Endpoints
 
@@ -93,6 +107,7 @@ Mapeia rotas HTTP para os serviços correspondentes.
 Implementação atual:
 
 - `BooksEndpoints` — rotas em `/api/books`
+- `AlertsEndpoints` — rotas em `/api/alerts`
 
 ### Program.cs
 
@@ -106,11 +121,12 @@ Responsável por:
 ## Convenções adotadas
 
 - Rotas agrupadas com `MapGroup`
-- Serviços registrados com `AddScoped`
+- Serviços registrados com `AddScoped` (parser como `AddSingleton`)
 - Validações simples no serviço, retornando `ValidationProblem` na API
 - Consultas de leitura usando `AsNoTracking`
 - Identificadores `Guid` gerados na criação dos registros
-- Datas de criação em UTC
+- Datas em UTC
+- Valores monetários em `decimal`
 
 ## Como evoluir o projeto
 
@@ -124,4 +140,4 @@ Para adicionar uma nova funcionalidade, a sequência recomendada é:
 6. Registrar o serviço e mapear a rota em `Program.cs`
 7. Documentar em `docs/05-api-endpoints.md`
 
-Próxima evolução prevista: serviço de consulta de preços e endpoints de histórico.
+Próxima evolução prevista: notificações locais no Linux.

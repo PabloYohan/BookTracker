@@ -4,14 +4,14 @@ Este documento apresenta um planejamento simples para evolução do projeto.
 
 ## Situação atual
 
-O projeto concluiu a base estrutural e o cadastro de livros. A próxima etapa é implementar a consulta de preços e o histórico automático.
+O projeto concluiu o cadastro de livros, registro manual de preços, histórico, identificação de promoção e alertas. A próxima etapa é implementar notificações locais no Linux.
 
 ## Versão 0.1 - Estrutura inicial
 
 - [X] Criar solução .NET
 - [X] Criar estrutura de pastas do projeto
 - [X] Criar entidades principais
-- [X] Configurar Postgress
+- [X] Configurar PostgreSQL
 - [X] Criar documentação inicial
 
 ## Versão 0.2 - Cadastro de livros
@@ -21,36 +21,36 @@ O projeto concluiu a base estrutural e o cadastro de livros. A próxima etapa é
 - [X] Permitir ativar ou desativar monitoramento
 - [X] Criar listagem de livros cadastrados
 
-## Versão 0.3 - Consulta de preços
+## Versão 0.3 - Registro manual de preços
 
-- [ ] Criar serviço de consulta de preço
-- [ ] Criar verificação manual de preço
-- [ ] Salvar histórico de preços
-- [ ] Exibir último preço encontrado
-- [ ] Exibir menor preço registrado
-
-Observação: a listagem de livros já expõe `lastPrice`, mas o valor só será preenchido após a implementação da consulta de preços.
+- [X] Validar URL da Amazon Brasil
+- [X] Extrair ASIN automaticamente
+- [X] Gerar URL canônica
+- [X] Criar endpoint de registro manual de preço
+- [X] Salvar histórico de preços
+- [X] Exibir último preço registrado
+- [X] Exibir menor preço registrado
 
 ## Versão 0.4 - Alertas
 
-- [ ] Criar regra para identificar promoção
-- [ ] Gerar alerta quando preço estiver abaixo do desejado
-- [ ] Marcar alerta como lido
+- [X] Criar regra para identificar promoção
+- [X] Gerar alerta quando preço estiver abaixo do desejado
+- [X] Marcar alerta como lido / não lido
+- [X] Listar alertas e contagem de não lidos
 - [ ] Exibir notificações no Linux
 
 ## Versão 0.5 - Execução automática
 
-- [ ] Criar Background Service de verificação automática
-- [ ] Configurar intervalo de execução
-- [ ] Verificar apenas livros ativos
-- [ ] Registrar logs básicos das verificações
+- [X] ~~Criar Background Service de verificação automática~~ *(removido — substituído por registro manual)*
+- [X] ~~Configurar intervalo de execução~~ *(removido)*
+- [X] ~~Verificar apenas livros ativos~~ *(removido)*
 
 ## Versão 1.0 - Primeira versão utilizável
 
-- [ ] Aplicação funcionando localmente
-- [X] Cadastro de livros
-- [ ] Histórico de preços
-- [ ] Alertas de promoção
+- [X] Aplicação funcionando localmente
+- [X] Cadastro de livros com validação de URL
+- [X] Histórico de preços
+- [X] Alertas de promoção
 - [ ] Notificações no sistema operacional
 
 ## Melhorias futuras

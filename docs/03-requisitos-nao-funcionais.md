@@ -8,7 +8,7 @@ A aplicação deve ser simples de instalar, executar e utilizar.
 
 Como o projeto é pessoal, a prioridade inicial é manter a solução objetiva e fácil de manter.
 
-**Status atual:** atendido na versão inicial, com execução via Docker Compose e `dotnet run`.
+**Status atual:** atendido, com execução via Docker Compose e `dotnet run`.
 
 ## RNF02 - Organização do código
 
@@ -17,7 +17,7 @@ O código deve ser organizado por pastas dentro de um único projeto, separando 
 - `Entities` — modelos de domínio
 - `Data` — acesso a dados (EF Core)
 - `Dtos` — contratos de entrada e saída da API
-- `Services` — regras de negócio e integrações
+- `Services` — regras de negócio
 - `Endpoints` — definição das rotas HTTP
 - `Program.cs` — configuração e composição da aplicação
 
@@ -51,20 +51,20 @@ notify-send "Livro em promoção!" "O livro está abaixo do preço desejado."
 
 ## RNF06 - Baixo consumo de recursos
 
-A aplicação deve consumir poucos recursos de CPU e memória, já que ficará em execução em segundo plano.
+A aplicação deve consumir poucos recursos de CPU e memória.
 
-**Status atual:** ainda não avaliado em execução contínua.
+**Status atual:** atendido. Sem Background Service nem requisições HTTP externas, o consumo é mínimo.
 
 ## RNF07 - Tratamento de falhas
 
 O sistema deve tratar falhas comuns, como:
 
-- Produto não encontrado
-- Erro ao consultar preço
-- Falha de conexão
-- Resposta inesperada da fonte de dados
+- Livro ou alerta não encontrado
+- URL inválida
+- Preço inválido
+- Livro inativo
 
-**Status atual:** parcial. A API já retorna `404` para recursos inexistentes e `400` para validações de entrada.
+**Status atual:** implementado. A API retorna `400` para validações, `404` para recursos inexistentes, `409` para conflitos de negócio e `410` para endpoints descontinuados.
 
 ## RNF08 - Logs básicos
 
@@ -72,15 +72,22 @@ O sistema deve registrar logs simples para ajudar na identificação de problema
 
 Exemplos:
 
-- Início de verificação
-- Preço encontrado
-- Promoção detectada
-- Erro ao consultar produto
+- Livro cadastrado
+- URL normalizada
+- Preço manual registrado
+- Preço-alvo atingido
+- Alerta criado
 
-**Status atual:** pendente.
+**Status atual:** implementado.
 
-## RNF09 - Manutenibilidade
+## RNF09 - Sem dependência de APIs externas
 
-A fonte de consulta de preços deve ser isolada em um serviço próprio, permitindo trocar a implementação futuramente sem afetar o restante do sistema.
+A aplicação não deve depender de APIs pagas, scraping ou requisições HTTP para a Amazon.
 
-**Status atual:** parcial. A camada `Services` já existe para livros; o serviço de consulta de preços ainda será adicionado.
+**Status atual:** atendido. Todos os preços são informados manualmente pelo usuário.
+
+## RNF10 - Manutenibilidade
+
+A validação de URL deve ser isolada em um serviço próprio, permitindo evoluir as regras sem afetar o restante do sistema.
+
+**Status atual:** implementado em `AmazonProductUrlParser`.

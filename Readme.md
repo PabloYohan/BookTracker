@@ -1,60 +1,121 @@
 # Book Promo Tracker
 
-Aplicação para monitoramento de preços de livros em lojas online, com foco inicial na Amazon.
+Aplicação local para acompanhar preços de livros na Amazon Brasil com **registro manual de preços**.
 
-A ideia principal é permitir que o usuário cadastre livros desejados, defina um preço-alvo e receba uma notificação quando algum item estiver em promoção.
+O usuário cadastra livros com a URL do produto, define um preço-alvo, consulta o preço diretamente na Amazon e informa manualmente o valor encontrado. O sistema salva o histórico e gera alertas quando o preço atinge ou fica abaixo do desejado.
 
 ## Objetivo
 
-Criar uma aplicação local para acompanhar automaticamente o preço de livros e alertar o usuário quando o valor encontrado for menor ou igual ao preço desejado.
+Permitir monitorar promoções de livros de forma organizada, sem consulta automática à Amazon. A URL serve apenas para identificar o produto, extrair o ASIN e abrir a página no navegador.
 
 ## Funcionalidades principais
 
-* Cadastro de livros para monitoramento
-* Definição de preço desejado
-* Consulta manual de preço
-* Verificação automática em intervalos configuráveis
-* Histórico de preços
-* Alertas de promoção
-* Notificações no Linux
+* Cadastro de livros com validação de URL da Amazon Brasil
+* Extração automática do ASIN e URL canônica
+* Registro manual de preços
+* Histórico de preços e consulta de menor preço
+* Identificação de promoção (preço ≤ preço desejado)
+* Alertas de promoção com leitura/não leitura
+* Notificações no Linux *(pendente)*
 
-## Tecnologias planejadas
+## Tecnologias
 
-* .NET
-* ASP.NET Core Web API
+* .NET 9
+* ASP.NET Core Minimal APIs
 * PostgreSQL
 * Entity Framework Core
-* Background Service
-* Linux notifications com `notify-send`
+* Swagger
+* xUnit
 
-## Estrutura inicial
+## Requisitos
 
-Projeto pessoal com um único `.csproj`. A organização é feita por pastas, sem múltiplos projetos:
-
-```text
-BookPromoTracker/
-├── src/
-│   ├── Entities/           # Entidades do domínio (Book, Alert, etc.)
-│   ├── Data/               # DbContext e configuração do EF Core
-│   ├── Services/           # Lógica de negócio (futuro)
-│   ├── Program.cs
-│   ├── BookPromoTracker.csproj
-│   └── appsettings.json
-│
-├── docs/
-├── docker-compose.yml
-├── BookPromoTracker.sln
-├── README.md
-└── .gitignore
-```
+* .NET SDK 9
+* Docker e Docker Compose (para PostgreSQL)
 
 ## Como executar
 
+### 1. Iniciar o PostgreSQL
+
 ```bash
 docker compose up -d
+```
+
+### 2. Restaurar dependências e aplicar migrations
+
+```bash
+dotnet restore
+dotnet ef database update --project src/BookPromoTracker.csproj
+```
+
+### 3. Executar a aplicação
+
+```bash
 dotnet run --project src/BookPromoTracker.csproj
+```
+
+### 4. Abrir o Swagger
+
+Em ambiente de desenvolvimento, acesse:
+
+```text
+http://localhost:5195/swagger
+```
+
+## Fluxo de uso
+
+### Cadastrar um livro
+
+```http
+POST /api/books
+```
+
+```json
+{
+  "title": "O Iluminado",
+  "author": "Stephen King",
+  "productUrl": "https://www.amazon.com.br/dp/8532520709",
+  "targetPrice": 35.00
+}
+```
+
+O ASIN é extraído automaticamente da URL. O campo `asin` não precisa ser informado na requisição.
+
+### Registrar um preço manualmente
+
+1. Abra a `productUrl` retornada pela API no navegador.
+2. Verifique o preço na página da Amazon.
+3. Registre o valor:
+
+```http
+POST /api/books/{id}/prices
+```
+
+```json
+{
+  "price": 29.90,
+  "currency": "BRL"
+}
+```
+
+### Consultar alertas
+
+```http
+GET /api/alerts
+GET /api/alerts?unreadOnly=true
+GET /api/alerts/unread-count
+PATCH /api/alerts/{id}/read
+```
+
+## Testes
+
+```bash
+dotnet test
 ```
 
 ## Documentação
 
-A documentação detalhada do projeto ficará disponível na pasta `docs`.
+A documentação detalhada está na pasta `docs/`.
+
+## Observação importante
+
+Esta aplicação **não consulta automaticamente** a Amazon. Não há scraping, APIs pagas nem requisições HTTP para páginas de produto. Todos os preços são informados manualmente pelo usuário.

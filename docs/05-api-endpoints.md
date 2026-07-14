@@ -30,8 +30,10 @@ Exemplo de resposta:
     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
     "title": "O Iluminado",
     "author": "Stephen King",
+    "asin": "8532520709",
+    "productUrl": "https://www.amazon.com.br/dp/8532520709",
     "targetPrice": 35.00,
-    "lastPrice": null,
+    "lastPrice": 29.90,
     "isActive": true
   }
 ]
@@ -41,24 +43,6 @@ Exemplo de resposta:
 
 ```http
 GET /books/{id}
-```
-
-Retorna os dados completos de um livro específico.
-
-Exemplo de resposta:
-
-```json
-{
-  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "title": "O Iluminado",
-  "author": "Stephen King",
-  "isbn": "",
-  "asin": "8532520709",
-  "productUrl": "https://www.amazon.com.br/dp/8532520709",
-  "targetPrice": 35.00,
-  "isActive": true,
-  "createdAt": "2026-07-13T20:00:00Z"
-}
 ```
 
 #### Cadastrar livro
@@ -74,7 +58,6 @@ Exemplo de corpo:
   "title": "O Iluminado",
   "author": "Stephen King",
   "productUrl": "https://www.amazon.com.br/dp/8532520709",
-  "asin": "8532520709",
   "targetPrice": 35.00
 }
 ```
@@ -83,12 +66,14 @@ Regras de validação:
 
 - `title` é obrigatório
 - `author` é obrigatório
-- `productUrl` é obrigatório
+- `productUrl` é obrigatório e deve ser uma URL válida da Amazon Brasil com ASIN
 - `targetPrice` deve ser maior que zero
-- `isbn` e `asin` são opcionais
+- `isbn` é opcional
+- O ASIN é extraído automaticamente da URL (não informar no corpo)
 - O livro é criado com `isActive: true`
+- A URL é salva no formato canônico `https://www.amazon.com.br/dp/{ASIN}`
 
-Resposta de sucesso: `201 Created`, com o livro criado e header `Location` apontando para `/api/books/{id}`.
+Resposta de sucesso: `201 Created`.
 
 #### Atualizar livro
 
@@ -96,36 +81,12 @@ Resposta de sucesso: `201 Created`, com o livro criado e header `Location` apont
 PUT /books/{id}
 ```
 
-Exemplo de corpo:
-
-```json
-{
-  "title": "O Iluminado",
-  "author": "Stephen King",
-  "productUrl": "https://www.amazon.com.br/dp/8532520709",
-  "asin": "8532520709",
-  "targetPrice": 30.00,
-  "isActive": true
-}
-```
-
-Atualiza todos os campos editáveis do livro, incluindo preço desejado e status de monitoramento.
-
-#### Ativar monitoramento
+#### Ativar / desativar monitoramento
 
 ```http
 PATCH /books/{id}/activate
-```
-
-Define `isActive` como `true` para o livro informado.
-
-#### Desativar monitoramento
-
-```http
 PATCH /books/{id}/deactivate
 ```
-
-Define `isActive` como `false` para o livro informado.
 
 #### Remover livro
 
@@ -133,21 +94,50 @@ Define `isActive` como `false` para o livro informado.
 DELETE /books/{id}
 ```
 
-Remove um livro cadastrado e seus registros relacionados.
-
 Resposta de sucesso: `204 No Content`.
-
-## Endpoints planejados
 
 ### Preços
 
-#### Verificar preço de um livro
+#### Registrar preço manualmente
 
 ```http
-POST /books/{id}/check-price
+POST /books/{id}/prices
 ```
 
-Executa uma verificação manual de preço para um livro específico.
+Exemplo de corpo:
+
+```json
+{
+  "price": 29.90,
+  "currency": "BRL",
+  "observedAt": "2026-07-13T23:15:00Z"
+}
+```
+
+Regras:
+
+- `price` é obrigatório e deve ser maior que zero
+- `currency` é opcional (padrão `BRL`; somente BRL aceito nesta versão)
+- `observedAt` é opcional (padrão: UTC atual)
+- Apenas livros ativos podem receber registros
+- Fonte salva: `Manual - Amazon`
+
+Exemplo de resposta (`201 Created`):
+
+```json
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "bookId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "bookTitle": "O Iluminado",
+  "price": 29.90,
+  "currency": "BRL",
+  "source": "Manual - Amazon",
+  "checkedAt": "2026-07-13T23:15:00Z",
+  "targetPrice": 35.00,
+  "targetReached": true,
+  "alertCreated": true
+}
+```
 
 #### Listar histórico de preços
 
@@ -155,15 +145,11 @@ Executa uma verificação manual de preço para um livro específico.
 GET /books/{id}/price-history
 ```
 
-Retorna o histórico de preços de um livro.
-
 #### Buscar menor preço registrado
 
 ```http
 GET /books/{id}/lowest-price
 ```
-
-Retorna o menor preço já registrado para um livro.
 
 ### Alertas
 
@@ -171,9 +157,28 @@ Retorna o menor preço já registrado para um livro.
 
 ```http
 GET /alerts
+GET /alerts?unreadOnly=true
+GET /alerts?bookId={bookId}
 ```
 
-Retorna os alertas gerados pelo sistema.
+Ordenação: do mais recente para o mais antigo.
+
+Exemplo de resposta:
+
+```json
+[
+  {
+    "id": "7ba85f64-5717-4562-b3fc-2c963f66afa6",
+    "bookId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "bookTitle": "O Iluminado",
+    "currentPrice": 29.90,
+    "targetPrice": 35.00,
+    "message": "O livro \"O Iluminado\" atingiu o preço desejado. Preço atual: R$ 29,90. Preço desejado: R$ 35,00.",
+    "wasRead": false,
+    "createdAt": "2026-07-13T23:15:00Z"
+  }
+]
+```
 
 #### Marcar alerta como lido
 
@@ -181,17 +186,53 @@ Retorna os alertas gerados pelo sistema.
 PATCH /alerts/{id}/read
 ```
 
-Marca um alerta como lido.
+Resposta: `204 No Content`.
 
-### Verificação geral
+#### Marcar alerta como não lido
 
-#### Executar verificação de todos os livros ativos
+```http
+PATCH /alerts/{id}/unread
+```
+
+Resposta: `204 No Content`.
+
+#### Contagem de alertas não lidos
+
+```http
+GET /alerts/unread-count
+```
+
+Exemplo:
+
+```json
+{
+  "count": 3
+}
+```
+
+## Endpoints descontinuados
+
+#### Verificar preço de um livro (descontinuado)
+
+```http
+POST /books/{id}/check-price
+```
+
+Retorna `410 Gone`:
+
+```json
+{
+  "message": "A consulta automática foi desativada. Registre o preço manualmente em POST /api/books/{id}/prices."
+}
+```
+
+#### Verificação geral automática (removido)
 
 ```http
 POST /price-checks/run
 ```
 
-Executa a verificação de preço para todos os livros ativos.
+Este endpoint foi removido.
 
 ## Códigos de resposta
 
@@ -199,9 +240,11 @@ Executa a verificação de preço para todos os livros ativos.
 |---|---|
 | 200 | Sucesso |
 | 201 | Criado com sucesso |
-| 204 | Removido com sucesso |
+| 204 | Operação concluída sem conteúdo |
 | 400 | Requisição inválida ou erro de validação |
 | 404 | Recurso não encontrado |
+| 409 | Conflito de negócio (ex.: livro inativo) |
+| 410 | Endpoint descontinuado |
 | 500 | Erro interno |
 
 ## Exemplos de requisição

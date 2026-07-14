@@ -2,19 +2,17 @@
 
 ## Book Promo Tracker
 
-O **Book Promo Tracker** é uma aplicação simples para acompanhar preços de livros em lojas online, com foco inicial na Amazon.
+O **Book Promo Tracker** é uma aplicação local para acompanhar preços de livros na Amazon Brasil com **registro manual de preços**.
 
-A ideia é permitir que o usuário cadastre livros de interesse, defina um preço desejado e receba uma notificação quando o valor encontrado estiver abaixo ou igual ao preço definido.
+O usuário cadastra livros de interesse com a URL do produto, define um preço desejado, consulta o preço diretamente na Amazon e informa manualmente o valor encontrado. O sistema salva o histórico e gera alertas quando o preço atinge ou fica abaixo do desejado.
 
 ## Objetivo
 
-Criar uma aplicação local e prática para monitorar promoções de livros de forma automática, evitando que o usuário precise verificar manualmente os preços todos os dias.
+Criar uma aplicação local e prática para monitorar promoções de livros sem depender de consulta automática à Amazon.
 
 ## Problema que o projeto resolve
 
-Livros podem variar bastante de preço ao longo do tempo. Como nem sempre o usuário acompanha essas mudanças, ele pode perder promoções interessantes.
-
-O sistema busca resolver isso por meio de verificações periódicas e alertas quando algum livro entra em promoção.
+Livros podem variar bastante de preço ao longo do tempo. O sistema organiza o acompanhamento: o usuário abre o produto pela URL salva, verifica o preço e registra manualmente. Quando o valor informado atinge o preço-alvo, um alerta é gerado.
 
 ## Público-alvo
 
@@ -22,18 +20,16 @@ Este projeto é voltado para uso pessoal, principalmente para pessoas que compra
 
 ## Escopo inicial
 
-A primeira versão do projeto terá foco em:
+A primeira versão do projeto tem foco em:
 
-- Cadastro de livros
-- Definição de preço desejado
-- Consulta de preço
+- Cadastro de livros com validação de URL da Amazon Brasil
+- Extração automática do ASIN
+- Registro manual de preços
 - Histórico de preços
 - Alertas de promoção
-- Notificação local no Linux
+- Notificação local no Linux *(pendente)*
 
 ## Status atual
-
-Até o momento, as versões **0.1** e **0.2** do roadmap estão concluídas.
 
 O que já funciona:
 
@@ -41,16 +37,16 @@ O que já funciona:
 - Banco PostgreSQL configurado via Docker Compose
 - Entidades `Book`, `PriceHistory` e `Alert` modeladas e persistidas com EF Core
 - CRUD completo de livros, com validação de entrada
-- Definição de preço desejado (`targetPrice`)
-- Ativação e desativação de monitoramento (`isActive`)
-- Listagem de livros cadastrados, incluindo último preço encontrado quando houver histórico
+- Validação de URL da Amazon Brasil e extração automática do ASIN
+- URL canônica salva no formato `https://www.amazon.com.br/dp/{ASIN}`
+- Registro manual de preços com fonte `Manual - Amazon`
+- Histórico de preços e consulta de menor preço
+- Identificação de promoção (preço ≤ preço desejado)
+- Geração de alertas com regras contra duplicatas
+- Endpoints para listar, filtrar e marcar alertas como lido/não lido
 
 O que ainda não foi implementado:
 
-- Consulta de preços em lojas online
-- Gravação automática de histórico de preços
-- Geração de alertas de promoção
-- Verificação automática em background
 - Notificações locais no Linux
 
 ## Tecnologias utilizadas
@@ -60,12 +56,12 @@ O que ainda não foi implementado:
 - PostgreSQL
 - Entity Framework Core
 - Swagger / OpenAPI
+- xUnit
 
 ## Tecnologias previstas
 
-- Background Service
 - Notificações Linux com `notify-send`
 
 ## Observação sobre coleta de preços
 
-A coleta de preços deve ser feita com cuidado, priorizando APIs oficiais quando possível. Caso seja usada leitura de páginas HTML, o projeto deve considerar possíveis mudanças de layout, bloqueios e limitações dos sites consultados.
+A aplicação **não consulta automaticamente** a Amazon. Não há scraping, APIs pagas nem requisições HTTP para páginas de produto. A URL é usada apenas para identificar o produto e permitir que o usuário abra a página no navegador.

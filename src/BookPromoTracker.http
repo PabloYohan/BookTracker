@@ -1,4 +1,6 @@
 @BookPromoTracker_HostAddress = http://localhost:5195
+@bookId = 3fa85f64-5717-4562-b3fc-2c963f66afa6
+@alertId = 7ba85f64-5717-4562-b3fc-2c963f66afa6
 
 ### Listar livros cadastrados
 GET {{BookPromoTracker_HostAddress}}/api/books
@@ -12,7 +14,7 @@ Accept: application/json
 
 ###
 
-### Cadastrar livro
+### Cadastrar livro com URL da Amazon Brasil
 POST {{BookPromoTracker_HostAddress}}/api/books
 Content-Type: application/json
 
@@ -20,7 +22,6 @@ Content-Type: application/json
   "title": "O Iluminado",
   "author": "Stephen King",
   "productUrl": "https://www.amazon.com.br/dp/8532520709",
-  "asin": "8532520709",
   "targetPrice": 35.00
 }
 
@@ -33,8 +34,7 @@ Content-Type: application/json
 {
   "title": "O Iluminado",
   "author": "Stephen King",
-  "productUrl": "https://www.amazon.com.br/dp/8532520709",
-  "asin": "8532520709",
+  "productUrl": "https://www.amazon.com.br/Livro/dp/8532520709?ref_=abc",
   "targetPrice": 30.00,
   "isActive": true
 }
@@ -55,5 +55,63 @@ Accept: application/json
 
 ### Remover livro
 DELETE {{BookPromoTracker_HostAddress}}/api/books/{{bookId}}
+
+###
+
+### Registrar preço manual
+POST {{BookPromoTracker_HostAddress}}/api/books/{{bookId}}/prices
+Content-Type: application/json
+
+{
+  "price": 29.90,
+  "currency": "BRL",
+  "observedAt": "2026-07-13T23:15:00Z"
+}
+
+###
+
+### Listar histórico de preços
+GET {{BookPromoTracker_HostAddress}}/api/books/{{bookId}}/price-history
+Accept: application/json
+
+###
+
+### Buscar menor preço registrado
+GET {{BookPromoTracker_HostAddress}}/api/books/{{bookId}}/lowest-price
+Accept: application/json
+
+###
+
+### Listar alertas
+GET {{BookPromoTracker_HostAddress}}/api/alerts
+Accept: application/json
+
+###
+
+### Listar alertas não lidos
+GET {{BookPromoTracker_HostAddress}}/api/alerts?unreadOnly=true
+Accept: application/json
+
+###
+
+### Consultar quantidade de alertas não lidos
+GET {{BookPromoTracker_HostAddress}}/api/alerts/unread-count
+Accept: application/json
+
+###
+
+### Marcar alerta como lido
+PATCH {{BookPromoTracker_HostAddress}}/api/alerts/{{alertId}}/read
+
+###
+
+### Marcar alerta como não lido
+PATCH {{BookPromoTracker_HostAddress}}/api/alerts/{{alertId}}/unread
+
+###
+
+### Endpoint descontinuado — verificação automática de preço
+POST {{BookPromoTracker_HostAddress}}/api/books/{{bookId}}/check-price
+Accept: application/json
 
 ###
